@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import { API_URL } from './config';
+import { readSync } from 'fs';
 
 interface props {};
 
@@ -15,6 +16,8 @@ interface reading {
   user: string;
   title: string | null;
   createdAt: Date;
+  showPlot: boolean | undefined;
+  samples: number[] | undefined;
 };
 
 interface state {
@@ -30,6 +33,7 @@ class App extends Component<props, state> {
       readings: [],
     };
 
+    this.fetchSamples = this.fetchSamples.bind(this);
     this.plotReading = this.plotReading.bind(this);
     this.renderReading = this.renderReading.bind(this);
   }
@@ -40,15 +44,46 @@ class App extends Component<props, state> {
     .then(readings => this.setState({ readings }));
   }
 
-  plotReading(index: number) {
+  fetchSamples(readingId: string) {
+    return fetch(`${API_URL}/reading/${readingId}`)
+      .then(res => res.json())
+  }
 
+  plotReading(index: number) {
+    return () => {
+      const readings = this.state.readings;
+      if(!readings[index].showPlot) {
+        if(!readings[index].samples) {
+          this.fetchSamples(readings[index]._id)
+          .then(reading => {
+            readings[index] = {
+              showPlot: true,
+              ...reading,
+            };
+            this.setState({
+              readings
+            });
+          });
+        } else {
+          readings[index].showPlot = true;
+          this.setState({
+            readings
+          });
+        }
+      } else {
+        readings[index].showPlot = false;
+        this.setState({
+          readings
+        });
+      }
+    };
   }
 
   renderReading(reading: reading, index: number) {
-    const { _id, title, createdAt } = this.state.readings[index];
+    const { _id, title, createdAt } = reading;
     const date = new Date(createdAt);
     return (
-      <Row className={`reading${index % 2 ? ' even' : ' odd'}`} key={_id}>
+      <Row onClick={this.plotReading(index)} className={`reading${index % 2 ? ' even' : ' odd'}`} key={_id}>
         <Col sm={6} className='title'>{title || ''}</Col>
         <Col sm={6} className='date'>{date.toLocaleString()}</Col>
       </Row>
@@ -56,6 +91,7 @@ class App extends Component<props, state> {
   }
 
   render() {
+    console.log(this.state.readings);
     return (
       <Container fluid className="main">
         <Row className='page-title-div'>
