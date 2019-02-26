@@ -1,0 +1,33 @@
+.page-title-div {
+  height: 100px;
+}
+
+.page-title {
+  width: 100%;
+  text-align: center;
+}
+
+.reading-list {
+  width: 100%;
+}
+
+.reading {
+  width: inherit;
+  height: 30px;
+}
+
+.odd {
+  background-color: lightgray;
+}
+
+.even {
+  background-color: lightslategray;
+}
+
+.title {
+  float: left;
+}
+
+.date {
+  float: right;
+}

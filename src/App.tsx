@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 
-import ReactList from 'react-list';
+import './App.css';
+
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 import { API_URL } from './config';
-import { mockData } from './mockData';
 
 interface props {};
 
@@ -27,7 +30,8 @@ class App extends Component<props, state> {
       readings: [],
     };
 
-    this.renderReadings = this.renderReadings.bind(this);
+    this.plotReading = this.plotReading.bind(this);
+    this.renderReading = this.renderReading.bind(this);
   }
 
   componentDidMount() {
@@ -36,35 +40,33 @@ class App extends Component<props, state> {
     .then(readings => this.setState({ readings }));
   }
 
-  generateItemName(title: string | null, date: Date) {
-    const dateObject: Date = new Date(date);
-    if(!title) {
-      return dateObject.toLocaleString();
-    }
-    return `${title}-${dateObject.toLocaleString()}`;
+  plotReading(index: number) {
+
   }
 
-  renderReadings(index: number, key: reading) {
+  renderReading(reading: reading, index: number) {
     const { _id, title, createdAt } = this.state.readings[index];
+    const date = new Date(createdAt);
     return (
-      <div key={_id}>
-        {this.generateItemName(title, createdAt)}
-      </div>
+      <Row className={`reading${index % 2 ? ' even' : ' odd'}`} key={_id}>
+        <Col sm={6} className='title'>{title || ''}</Col>
+        <Col sm={6} className='date'>{date.toLocaleString()}</Col>
+      </Row>
     );
   }
 
   render() {
     return (
-      <div className="main">
-        <h1>Readings history</h1>
-        <div style={{ overflow: 'auto', maxHeight: 400, }}>
-          <ReactList 
-            itemRenderer={this.renderReadings}
-            length={this.state.readings.length}
-            type='uniform'
-          />
+      <Container fluid className="main">
+        <Row className='page-title-div'>
+            <h1 className='page-title'>Readings history</h1>
+        </Row>
+        <div className='readings-list'>
+          {
+            this.state.readings.map(this.renderReading)
+          }
         </div>
-      </div>
+      </Container>
     );
   }
 }
