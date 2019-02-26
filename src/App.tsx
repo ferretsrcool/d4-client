@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 
 import './App.css';
 
+import Plot from './Plot';
+
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import { API_URL } from './config';
-import { readSync } from 'fs';
 
 interface props {};
 
@@ -16,8 +17,8 @@ interface reading {
   user: string;
   title: string | null;
   createdAt: Date;
-  showPlot: boolean | undefined;
-  samples: number[] | undefined;
+  showPlot?: boolean;
+  samples?: number[];
 };
 
 interface state {
@@ -52,7 +53,9 @@ class App extends Component<props, state> {
   plotReading(index: number) {
     return () => {
       const readings = this.state.readings;
+      // Toggle between showing and hiding the plot
       if(!readings[index].showPlot) {
+        // Load the samples if not already loaded.
         if(!readings[index].samples) {
           this.fetchSamples(readings[index]._id)
           .then(reading => {
@@ -83,10 +86,19 @@ class App extends Component<props, state> {
     const { _id, title, createdAt } = reading;
     const date = new Date(createdAt);
     return (
-      <Row onClick={this.plotReading(index)} className={`reading${index % 2 ? ' even' : ' odd'}`} key={_id}>
-        <Col sm={6} className='title'>{title || ''}</Col>
-        <Col sm={6} className='date'>{date.toLocaleString()}</Col>
-      </Row>
+      <div key={_id}>
+        <Row onClick={this.plotReading(index)} className={`reading${index % 2 ? ' even' : ' odd'}`} >
+          <Col sm={6} className='title'>{title || ''}</Col>
+          <Col sm={6} className='date'>{date.toLocaleString()}</Col>
+        </Row>
+        {
+            reading.showPlot ?
+            (<Row className='plot' >
+              <Plot samples={reading.samples || []} />
+            </Row>)
+            : null
+        }
+      </div>
     );
   }
 

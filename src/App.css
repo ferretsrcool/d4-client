@@ -31,3 +31,9 @@
 .date {
   float: right;
 }
+
+.plot {
+  width: 100%;
+  margin-bottom: 10px;
+  justify-content: center;
+}
