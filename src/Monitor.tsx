@@ -19,9 +19,16 @@ class Monitor extends React.Component<props, state> {
   constructor(props: props) {
     super(props);
 
-    this.socket = new Socket();
 
     this.state = {};
+   
+    this.onSample = this.onSample.bind(this);
+    this.onReading = this.onReading.bind(this);
+
+    this.socket = new Socket();
+    this.socket.onSample(this.onSample);
+    this.socket.onReading(this.onReading);
+
   }
 
   onSample(sample: string) {

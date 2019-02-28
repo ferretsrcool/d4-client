@@ -13,7 +13,7 @@ class Socket {
     this.socket.on('new sample', callback);
   }
 
-  onRefresh(callback: (reading: reading) => void): void {
+  onReading(callback: (reading: reading) => void): void {
     this.socket.on('new reading',
     callback);
   }
