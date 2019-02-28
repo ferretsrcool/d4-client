@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import './App.css';
+import './History.css';
 
 import Plot from './Plot';
 
@@ -11,15 +11,6 @@ import Col from 'react-bootstrap/Col';
 import { API_URL } from './config';
 
 interface props {};
-
-interface reading {
-  _id: string;
-  user: string;
-  title: string | null;
-  createdAt: Date;
-  showPlot?: boolean;
-  samples?: number[];
-};
 
 interface state {
   readings: reading[]; 

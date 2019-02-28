@@ -13,6 +13,7 @@
     "react-charts": "^2.0.0-alpha.12",
     "react-dom": "^16.8.3",
     "react-scripts": "2.1.5",
+    "socket.io-client": "^2.2.0",
     "typescript": "3.3.3333"
   },
   "scripts": {
@@ -31,6 +32,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@types/react-bootstrap": "^0.32.17"
+    "@types/react-bootstrap": "^0.32.17",
+    "@types/socket.io-client": "^1.4.32"
   }
 }
