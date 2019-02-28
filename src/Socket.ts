@@ -3,19 +3,20 @@ import { API_URL } from './config';
 
 class Socket {
 
-  private socket: SocketIOClient.Socket;
+  private static socket: SocketIOClient.Socket;
 
-  constructor() {
+  public static init() {
     this.socket = socketIoClient(API_URL);
   }
 
-  onSample(callback: (sample: string) => void): void {
+  public static onSample(callback: (sample: string) => void): void {
     this.socket.on('new sample', callback);
   }
 
-  onReading(callback: (reading: reading) => void): void {
-    this.socket.on('new reading',
-    callback);
+  public static onReading(callback: (reading: reading) => void): void {
+    this.socket.on('new reading', (rawData: string) => {
+      callback(JSON.parse(rawData));
+    });
   }
 }
 

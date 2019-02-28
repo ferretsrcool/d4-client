@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import './History.css';
 
+import Socket from './Socket';
+
 import Plot from './Plot';
 
 import Container from 'react-bootstrap/Container';
@@ -28,12 +30,21 @@ class App extends Component<props, state> {
     this.fetchSamples = this.fetchSamples.bind(this);
     this.plotReading = this.plotReading.bind(this);
     this.renderReading = this.renderReading.bind(this);
+    this.onReading = this.onReading.bind(this);
+    
+    Socket.onReading(this.onReading);
   }
 
   componentDidMount() {
     fetch(`${API_URL}/reading`)
     .then(res => res.json())
     .then(readings => this.setState({ readings }));
+  }
+
+  onReading(reading: reading) {
+    this.setState((prevState: state) => ({
+      readings: [...prevState.readings, reading],
+    }));
   }
 
   fetchSamples(readingId: string) {

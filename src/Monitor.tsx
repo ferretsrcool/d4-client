@@ -10,41 +10,45 @@ import Socket from './Socket';
 
 interface props {};
 
-interface state {};
+interface state {
+  samples: number[],
+};
 
 class Monitor extends React.Component<props, state> {
-
-  private socket: Socket;
 
   constructor(props: props) {
     super(props);
 
 
-    this.state = {};
+    this.state = {
+      samples: [],
+    };
    
+
     this.onSample = this.onSample.bind(this);
     this.onReading = this.onReading.bind(this);
-
-    this.socket = new Socket();
-    this.socket.onSample(this.onSample);
-    this.socket.onReading(this.onReading);
-
+    
+    Socket.onSample(this.onSample);
+    Socket.onReading(this.onReading);
   }
 
   onSample(sample: string) {
-    console.log(sample);
+    this.setState((prevState: state) => ({
+      samples: [...prevState.samples, parseFloat(sample)], 
+    }));
   }
 
-  onReading(reading: reading) {
-    console.log(reading);
+  onReading() {
+    this.setState({
+      samples: [],
+    });
   }
 
   render() {
-    return (
-      <div>
-        Hello World!
-      </div>
-    )
+    if(this.state.samples.length > 0) {
+      return <Plot samples={this.state.samples} />; 
+    }
+    return null;
   }
 }
 
