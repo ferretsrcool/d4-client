@@ -2,16 +2,16 @@ import React from 'react';
 
 import Plot from './Plot';
 
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import { API_URL } from './config';
 
 import Socket from './Socket';
 
-interface props {};
+interface props {
+  style: object;
+};
 
 interface state {
-  samples: number[],
+  samples: number[];
 };
 
 class Monitor extends React.Component<props, state> {
@@ -27,6 +27,16 @@ class Monitor extends React.Component<props, state> {
 
     this.onSample = this.onSample.bind(this);
     this.onReading = this.onReading.bind(this);
+    
+  }
+
+  componentDidMount() {
+    fetch(`${API_URL}/reading/samples`)
+    .then(res => res.json())
+    .then((samples: string[]) => this.setState({ 
+      samples: samples.map((sample: string) => parseFloat(sample)) 
+    }))
+    .catch((err: any) => console.log('Will render it later.'));
     
     Socket.onSample(this.onSample);
     Socket.onReading(this.onReading);
@@ -46,7 +56,7 @@ class Monitor extends React.Component<props, state> {
 
   render() {
     if(this.state.samples.length > 0) {
-      return <Plot samples={this.state.samples} />; 
+      return <Plot style={this.props.style} samples={this.state.samples} />; 
     }
     return null;
   }

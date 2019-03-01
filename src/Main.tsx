@@ -12,11 +12,11 @@ import Row from 'react-bootstrap/Row';
 const Main = () => {
   Socket.init(); 
   return (
-    <Container fluid>
-      <Row className='monitor-tab'>
-        <Monitor />
+    <Container fluid style={{ height: '100%'}}>
+      <Row style={{height: '500px',}} className='monitor-tab'>
+        <Monitor style={{ marginTop: '50px',}} />
       </Row>
-      <Row className='history-tab'>
+      <Row style={{height: '500px', overflow: 'scroll',}} className='history-tab'>
         <History />
       </Row>
     </Container>
