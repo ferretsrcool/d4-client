@@ -135,9 +135,19 @@ class App extends Component<props, state> {
         <Row className={`reading ${index % 2 ? 'even' : 'odd'}`} >
           <Col sm={6} className='date'>{date.toLocaleString()}</Col>
           <Col sm={3} className='show-reading'>
-            <Button onClick={this.plotReading(index)} variant='primary'>
-              Show plot
-            </Button>
+            {
+              !reading.showPlot ?
+              (
+              <Button onClick={this.plotReading(index)} variant='primary'>
+                Show plot
+              </Button>
+              ) :
+              (
+                <Button onClick={this.plotReading(index)} variant='danger'>
+                  Hide plot
+                </Button>
+              )
+            }
           </Col>
           <Col sm={3} className='add-to-monitor'>
             {

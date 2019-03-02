@@ -65,7 +65,7 @@ class Monitor extends React.Component<props, state> {
             <h1 className='page-title'>Monitor</h1>
         </Row>
         <Row style={{ justifyContent: 'center', }}>
-          <Plot style={this.props.style} samples={this.state.samples} />
+          <Plot style={this.props.style} readings={this.props.monitoredReadings} />
         </Row>
       </Container>
     );
