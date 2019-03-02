@@ -9,10 +9,14 @@ import Plot from './Plot';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 import { API_URL } from './config';
 
-interface props {};
+interface props {
+  addToMonitor: CallableFunction;
+  removeFromMonitor: CallableFunction;
+};
 
 interface state {
   readings: reading[]; 
@@ -89,9 +93,18 @@ class App extends Component<props, state> {
     const date = new Date(createdAt);
     return (
       <div key={_id}>
-        <Row onClick={this.plotReading(index)} className={`reading${index % 2 ? ' even' : ' odd'}`} >
-          <Col sm={6} className='title'>{title || ''}</Col>
+        <Row className={`reading${index % 2 ? ' even' : ' odd'}`} >
           <Col sm={6} className='date'>{date.toLocaleString()}</Col>
+          <Col sm={3} className='show-reading'>
+            <Button onClick={this.plotReading(index)} variant='primary'>
+              Show plot
+            </Button>
+          </Col>
+          <Col sm={3} className='add-to-monitor'>
+            <Button variant='primary'>
+              Add to monitor
+            </Button>
+          </Col>
         </Row>
         {
             reading.showPlot ?
@@ -107,8 +120,8 @@ class App extends Component<props, state> {
   render() {
     console.log(this.state.readings);
     return (
-      <Container fluid className="main">
-        <Row className='page-title-div'>
+      <Container className="main">
+        <Row className='history-title-div'>
             <h1 className='page-title'>Readings history</h1>
         </Row>
         <div className='readings-list'>

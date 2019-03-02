@@ -6,6 +6,9 @@ import { API_URL } from './config';
 
 import Socket from './Socket';
 
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+
 interface props {
   style: object;
 };
@@ -55,10 +58,16 @@ class Monitor extends React.Component<props, state> {
   }
 
   render() {
-    if(this.state.samples.length > 0) {
-      return <Plot style={this.props.style} samples={this.state.samples} />; 
-    }
-    return null;
+    return (
+      <Container fluid className="main">
+        <Row className='page-title-div'>
+            <h1 className='page-title'>Monitor</h1>
+        </Row>
+        <Row style={{ justifyContent: 'center', }}>
+          <Plot style={this.props.style} samples={this.state.samples} />
+        </Row>
+      </Container>
+    );
   }
 }
 

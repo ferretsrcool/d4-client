@@ -1,3 +1,18 @@
+.container {
+  width: 100%;
+  max-width: 2000px !important;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .monitor-tab {
+  height: 50%;
   justify-content: center;
+}
+
+.history-tab {
+  overflow: hidden;
+  width: 100%;
+  height: 50%;
 }
