@@ -36,17 +36,21 @@ class Main extends React.Component<props, state> {
     }));
   }
 
-  removeFromMonitor(readingId: string) {
+  removeFromMonitor(monitoredReading: reading) {
     this.setState((prevState: state) => ({
-      monitoredReadings: prevState.monitoredReadings.filter((reading: reading) => reading._id !== readingId), 
+      monitoredReadings: prevState.monitoredReadings.filter((reading: reading) => reading._id !== monitoredReading._id), 
     }));
   }
 
   render() {
+    console.log(this.state.monitoredReadings);
     return (
       <Container>
         <Row className='monitor-tab'>
-          <Monitor style={{ marginTop: '50px',}} />
+          <Monitor
+            monitoredReadings={this.state.monitoredReadings}
+            style={{ marginTop: '50px',}} 
+          />
         </Row>
         <Row className='history-tab'>
           <History 

@@ -11,6 +11,7 @@ import Row from 'react-bootstrap/Row';
 
 interface props {
   style: object;
+  monitoredReadings: reading[];
 };
 
 interface state {

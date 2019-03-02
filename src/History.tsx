@@ -31,10 +31,12 @@ class App extends Component<props, state> {
       readings: [],
     };
 
-    this.fetchSamples = this.fetchSamples.bind(this);
+    this.loadSamples = this.loadSamples.bind(this);
     this.plotReading = this.plotReading.bind(this);
     this.renderReading = this.renderReading.bind(this);
     this.onReading = this.onReading.bind(this);
+    this.addToMonitor = this.addToMonitor.bind(this);
+    this.removeFromMonitor = this.removeFromMonitor.bind(this);
     
     Socket.onReading(this.onReading);
   }
@@ -51,9 +53,49 @@ class App extends Component<props, state> {
     }));
   }
 
-  fetchSamples(readingId: string) {
-    return fetch(`${API_URL}/reading/${readingId}`)
-      .then(res => res.json())
+  loadSamples(readingIndex: number): Promise<void> {
+    const readings = this.state.readings;
+    return fetch(`${API_URL}/reading/${readings[readingIndex]._id}`)
+    .then(res => res.json())
+    .then(reading => {
+      readings[readingIndex] = reading;
+      this.setState({
+        readings
+      });
+    });
+  }
+
+  addToMonitor(index: number) {
+    return () => {
+      const readings = this.state.readings;
+      if(!readings[index].samples) {
+        this.loadSamples(index)
+        .then(() => {
+          this.props.addToMonitor(readings[index])
+          readings[index].monitored = true;
+          this.setState({
+            readings
+          });
+        });
+      } else {
+        this.props.addToMonitor(readings[index]);
+        readings[index].monitored = true;
+        this.setState({
+          readings
+        });
+      }
+    };
+  }
+
+  removeFromMonitor(index: number) {
+    return () => {
+      const readings = this.state.readings;
+      this.props.removeFromMonitor(readings[index]);
+      readings[index].monitored = false;
+      this.setState({
+        readings
+      });
+    }
   }
 
   plotReading(index: number) {
@@ -63,12 +105,9 @@ class App extends Component<props, state> {
       if(!readings[index].showPlot) {
         // Load the samples if not already loaded.
         if(!readings[index].samples) {
-          this.fetchSamples(readings[index]._id)
-          .then(reading => {
-            readings[index] = {
-              showPlot: true,
-              ...reading,
-            };
+          this.loadSamples(index)
+          .then(() => {
+            readings[index].showPlot = true;
             this.setState({
               readings
             });
@@ -89,11 +128,11 @@ class App extends Component<props, state> {
   }
 
   renderReading(reading: reading, index: number) {
-    const { _id, title, createdAt } = reading;
+    const { _id, createdAt } = reading;
     const date = new Date(createdAt);
     return (
       <div key={_id}>
-        <Row className={`reading${index % 2 ? ' even' : ' odd'}`} >
+        <Row className={`reading ${index % 2 ? 'even' : 'odd'}`} >
           <Col sm={6} className='date'>{date.toLocaleString()}</Col>
           <Col sm={3} className='show-reading'>
             <Button onClick={this.plotReading(index)} variant='primary'>
@@ -101,9 +140,25 @@ class App extends Component<props, state> {
             </Button>
           </Col>
           <Col sm={3} className='add-to-monitor'>
-            <Button variant='primary'>
-              Add to monitor
-            </Button>
+            {
+              !reading.monitored ?
+              (
+                <Button 
+                  variant='primary'
+                  onClick={this.addToMonitor(index)}  
+                >
+                  Add to monitor
+                </Button>
+              ) :
+              (
+                <Button 
+                  variant='danger'
+                  onClick={this.removeFromMonitor(index)}  
+                >
+                  Remove from monitor
+                </Button>
+              )
+            }
           </Col>
         </Row>
         {

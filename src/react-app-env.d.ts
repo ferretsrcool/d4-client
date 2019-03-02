@@ -6,6 +6,7 @@ type reading = {
   _id: string,
   user: string,
   title: string | null,
+  monitored?: boolean,
   createdAt: Date,
   showPlot?: boolean,
   samples?: number[],
