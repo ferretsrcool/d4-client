@@ -8,6 +8,7 @@ import Socket from './Socket';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import Button from'react-bootstrap/Button';
 
 interface props {
   style: object;
@@ -16,6 +17,7 @@ interface props {
 
 interface state {
   samples: number[];
+  realTime: boolean;
 };
 
 class Monitor extends React.Component<props, state> {
@@ -26,12 +28,12 @@ class Monitor extends React.Component<props, state> {
 
     this.state = {
       samples: [],
+      realTime: true,
     };
-   
 
     this.onSample = this.onSample.bind(this);
     this.onReading = this.onReading.bind(this);
-    
+    this.toggleRealTime = this.toggleRealTime.bind(this);
   }
 
   componentDidMount() {
@@ -44,6 +46,12 @@ class Monitor extends React.Component<props, state> {
     
     Socket.onSample(this.onSample);
     Socket.onReading(this.onReading);
+  }
+
+  toggleRealTime() {
+    this.setState((prevState) => ({
+      realTime: prevState.realTime ? false : true,
+    }))
   }
 
   onSample(sample: string) {
@@ -59,13 +67,26 @@ class Monitor extends React.Component<props, state> {
   }
 
   render() {
+    const plottedData = this.state.realTime ?
+      this.state.samples : this.props.monitoredReadings;
     return (
       <Container fluid className="main">
         <Row className='page-title-div'>
             <h1 className='page-title'>Monitor</h1>
         </Row>
         <Row style={{ justifyContent: 'center', }}>
-          <Plot style={this.props.style} readings={this.props.monitoredReadings} />
+          <Plot 
+            style={this.props.style} 
+            data={plottedData}
+          />
+        </Row>
+        <Row style={{ justifyContent: 'center', }}>
+          <Button 
+            variant='primary'
+            onClick={this.toggleRealTime}  
+          >
+            { this.state.realTime ? 'Compare' : 'Real Time' }
+          </Button>
         </Row>
       </Container>
     );

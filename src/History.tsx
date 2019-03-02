@@ -174,7 +174,7 @@ class App extends Component<props, state> {
         {
             reading.showPlot ?
             (<Row className='plot' >
-              <Plot samples={reading.samples || []} />
+              <Plot data={reading.samples || []} />
             </Row>)
             : null
         }
