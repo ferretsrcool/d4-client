@@ -6,12 +6,18 @@ import { API_URL } from './config';
 
 import Socket from './Socket';
 
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Button from'react-bootstrap/Button';
+
 interface props {
   style: object;
+  monitoredReadings: reading[];
 };
 
 interface state {
-  samples: number[];
+  samples: string[];
+  realTime: boolean;
 };
 
 class Monitor extends React.Component<props, state> {
@@ -22,19 +28,19 @@ class Monitor extends React.Component<props, state> {
 
     this.state = {
       samples: [],
+      realTime: true,
     };
-   
 
     this.onSample = this.onSample.bind(this);
     this.onReading = this.onReading.bind(this);
-    
+    this.toggleRealTime = this.toggleRealTime.bind(this);
   }
 
   componentDidMount() {
     fetch(`${API_URL}/reading/samples`)
     .then(res => res.json())
     .then((samples: string[]) => this.setState({ 
-      samples: samples.map((sample: string) => parseFloat(sample)) 
+      samples,
     }))
     .catch((err: any) => console.log('Will render it later.'));
     
@@ -42,9 +48,15 @@ class Monitor extends React.Component<props, state> {
     Socket.onReading(this.onReading);
   }
 
+  toggleRealTime() {
+    this.setState((prevState) => ({
+      realTime: prevState.realTime ? false : true,
+    }))
+  }
+
   onSample(sample: string) {
     this.setState((prevState: state) => ({
-      samples: [...prevState.samples, parseFloat(sample)], 
+      samples: [...prevState.samples, sample], 
     }));
   }
 
@@ -55,10 +67,29 @@ class Monitor extends React.Component<props, state> {
   }
 
   render() {
-    if(this.state.samples.length > 0) {
-      return <Plot style={this.props.style} samples={this.state.samples} />; 
-    }
-    return null;
+    const plottedData = this.state.realTime ?
+      this.state.samples : this.props.monitoredReadings;
+    return (
+      <Container fluid className="main">
+        <Row className='page-title-div'>
+            <h1 className='page-title'>Monitor</h1>
+        </Row>
+        <Row style={{ justifyContent: 'center', }}>
+          <Plot 
+            style={this.props.style} 
+            data={plottedData}
+          />
+        </Row>
+        <Row style={{ justifyContent: 'center', }}>
+          <Button 
+            variant='primary'
+            onClick={this.toggleRealTime}  
+          >
+            { this.state.realTime ? 'Compare' : 'Real Time' }
+          </Button>
+        </Row>
+      </Container>
+    );
   }
 }
 
