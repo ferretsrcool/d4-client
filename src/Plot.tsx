@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Chart } from 'react-charts';
 
+import math from 'mathjs';
+import { InputGroup } from 'react-bootstrap';
 
 interface props {
   data: string[] | reading[]; 
@@ -14,7 +16,15 @@ const convertSampleToScale = (sample: string, scale: string): string => {
   if (scale === 'linear') {
     return sample;
   }
-  return sample.length.toString();
+  if (sample === '0') {
+    throw Error('Cannot logarithmically plot sample containing 0 value.');
+  }
+  // @ts-ignore
+  let logarithmicResult: number = math.log(parseFloat(sample), 10);
+  if(!logarithmicResult) {
+    logarithmicResult = Number.MIN_VALUE;
+  }
+  return logarithmicResult.toString();
 }
 
 const convertSamples = (samples: string[], scale: string): (string | number)[][] => {
@@ -47,7 +57,18 @@ const Plot = ({ data, scale, className, style = {} }: props) => {
   if (scale !== 'linear' && scale !== 'log') {
     throw Error('Invalid scale being used');
   }
-  const plotData: (string | number)[][][] = convertData(data, scale);
+  let plotData: (string | number)[][][]
+  try { 
+    plotData = convertData(data, scale);
+  } catch (err) {
+    return (
+      <div> 
+        <h1>A plotting error has occured!</h1> 
+        <h3>{err.message}</h3>
+      </div>
+    );
+  }
+  console.log(plotData);
   return (
     <div className={`chart ${className || ''}`}
         style={{
@@ -60,7 +81,7 @@ const Plot = ({ data, scale, className, style = {} }: props) => {
         data={plotData}
         axes={[
           { primary: true, type: "linear", position: "bottom" },
-          { type: scale, position: "left" }
+          { type: 'linear', position: "left" }
         ]}
       />
     </div>
