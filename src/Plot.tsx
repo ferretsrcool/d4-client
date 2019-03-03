@@ -68,7 +68,6 @@ const Plot = ({ data, scale, className, style = {} }: props) => {
       </div>
     );
   }
-  console.log(plotData);
   return (
     <div className={`chart ${className || ''}`}
         style={{
