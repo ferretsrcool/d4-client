@@ -16,7 +16,7 @@ interface props {
 };
 
 interface state {
-  samples: number[];
+  samples: string[];
   realTime: boolean;
 };
 
@@ -40,7 +40,7 @@ class Monitor extends React.Component<props, state> {
     fetch(`${API_URL}/reading/samples`)
     .then(res => res.json())
     .then((samples: string[]) => this.setState({ 
-      samples: samples.map((sample: string) => parseFloat(sample)) 
+      samples,
     }))
     .catch((err: any) => console.log('Will render it later.'));
     
@@ -56,7 +56,7 @@ class Monitor extends React.Component<props, state> {
 
   onSample(sample: string) {
     this.setState((prevState: state) => ({
-      samples: [...prevState.samples, parseFloat(sample)], 
+      samples: [...prevState.samples, sample], 
     }));
   }
 

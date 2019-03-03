@@ -191,7 +191,7 @@ class App extends Component<props, state> {
         </Row>
         <div className='readings-list'>
           {
-            this.state.readings.map(this.renderReading)
+            this.state.readings.map(this.renderReading).reverse()
           }
         </div>
       </Container>
