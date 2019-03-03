@@ -4,24 +4,36 @@ import { Chart } from 'react-charts';
 
 
 interface props {
-  data?: string[] | reading[]; 
+  data: string[] | reading[]; 
   scale?: string;
   className?: string;
   style?: object;
 };
 
-const convertSamples = (samples?: string[]): (string | number)[][] => {
+const convertSampleToScale = (sample: string, scale: string): string => {
+  if (scale === 'linear') {
+    return sample;
+  }
+  return sample.length.toString();
+}
+
+const convertSamples = (samples: string[], scale: string): (string | number)[][] => {
   if (typeof samples === 'undefined') {
     throw Error('No samples provided');
   }
-  return samples.map((sample: string, index: number) => [index * 0.1, sample]);
+  return samples.map((sample: string, index: number) => [index * 0.1, convertSampleToScale(sample, scale)]);
 };
 
 const convertData = (data: any[], scale: string): (string | number)[][][] => {
   if(typeof data[0] === 'string') {
-    return [convertSamples(data)];
+    return [convertSamples(data, scale)];
   } else {
-    return data.map((reading: reading) => convertSamples(reading.samples));
+    return data.map((reading: reading) => {
+      if(typeof reading.samples === 'undefined') {
+        throw Error('Cannot plot reading with no samples provided.');
+      } 
+      return convertSamples(reading.samples, scale);
+    });
   }
 };
 
