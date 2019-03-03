@@ -4,19 +4,19 @@ import { Chart } from 'react-charts';
 
 
 interface props {
-  data?: any; 
+  data?: string[] | reading[]; 
   className?: string;
   style?: object;
 };
 
-const convertSamples = (samples?: number[]): number[][] => {
+const convertSamples = (samples?: string[]): (string | number)[][] => {
   if (typeof samples === 'undefined') {
     throw Error('No samples provided');
   }
-  return samples.map((sample: number, index: number) => [index * 0.1, sample]);
+  return samples.map((sample: string, index: number) => [index * 0.1, sample]);
 };
 
-const convertData = (data: any): number[][][] => {
+const convertData = (data: any): (string | number)[][][] => {
   if(typeof data[0] !== 'object') {
     return [convertSamples(data)];
   } else {
@@ -28,24 +28,23 @@ const Plot = ({ data, className, style = {} }: props) => {
   if(typeof data === 'undefined') {
     throw Error("No samples or reading given");
   }
-  const plotData = convertData(data);
-  console.log(plotData);
+  const plotData: (string | number)[][][] = convertData(data);
   return (
-  <div className={`chart ${className || ''}`}
-      style={{
-        width: "400px",
-        height: "300px",
-        ...style,
-      }}
-  >
-    <Chart
-      data={plotData}
-      axes={[
-        { primary: true, type: "linear", position: "bottom" },
-        { type: "linear", position: "left" }
-      ]}
-    />
-  </div>
+    <div className={`chart ${className || ''}`}
+        style={{
+          width: "400px",
+          height: "300px",
+          ...style,
+        }}
+    >
+      <Chart
+        data={plotData}
+        axes={[
+          { primary: true, type: "linear", position: "bottom" },
+          { type: "linear", position: "left" }
+        ]}
+      />
+    </div>
   )
 };
 

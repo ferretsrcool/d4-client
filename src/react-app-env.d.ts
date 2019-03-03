@@ -9,5 +9,5 @@ type reading = {
   monitored?: boolean,
   createdAt: Date,
   showPlot?: boolean,
-  samples?: number[],
+  samples?: string[],
 };
