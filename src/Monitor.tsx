@@ -18,6 +18,7 @@ interface props {
 interface state {
   samples: string[];
   realTime: boolean;
+  scale: string;
 };
 
 class Monitor extends React.Component<props, state> {
@@ -29,11 +30,13 @@ class Monitor extends React.Component<props, state> {
     this.state = {
       samples: [],
       realTime: true,
+      scale: 'linear',
     };
 
     this.onSample = this.onSample.bind(this);
     this.onReading = this.onReading.bind(this);
     this.toggleRealTime = this.toggleRealTime.bind(this);
+    this.toggleScale = this.toggleScale.bind(this);
   }
 
   componentDidMount() {
@@ -52,6 +55,12 @@ class Monitor extends React.Component<props, state> {
     this.setState((prevState) => ({
       realTime: prevState.realTime ? false : true,
     }))
+  }
+
+  toggleScale() {
+    this.setState((prevState) => ({
+      scale: prevState.scale === 'linear' ? 'log' : 'linear',
+    }));
   }
 
   onSample(sample: string) {
@@ -78,6 +87,7 @@ class Monitor extends React.Component<props, state> {
           <Plot 
             style={this.props.style} 
             data={plottedData}
+            scale={this.state.scale}
           />
         </Row>
         <Row style={{ justifyContent: 'center', }}>
@@ -86,6 +96,12 @@ class Monitor extends React.Component<props, state> {
             onClick={this.toggleRealTime}  
           >
             { this.state.realTime ? 'Compare' : 'Real Time' }
+          </Button>
+          <Button 
+            variant='primary'
+            onClick={this.toggleScale}  
+          >
+            { this.state.scale === 'linear' ? 'Logarithmic' : 'Linear' }
           </Button>
         </Row>
       </Container>
