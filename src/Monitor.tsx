@@ -89,6 +89,11 @@ class Monitor extends React.Component<props, state> {
             data={plottedData}
             scale={this.state.scale}
           />
+          {
+            this.state.samples.length > 0
+            ? <h1>{this.state.samples[this.state.samples.length-1]}</h1>
+            : null
+          }
         </Row>
         <Row style={{ justifyContent: 'center', }}>
           <Button 
